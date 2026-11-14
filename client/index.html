@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8fafc" />
+    <meta name="color-scheme" content="dark light" />
+    <!--
+      Title, description, canonical URL, Open Graph, Twitter and JSON-LD tags are
+      injected at build time by build/seoPlugin.js and updated per page by <Seo>.
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!--
+      Fonts: Inter for all text, JetBrains Mono for small code and label accents.
+      Loaded without blocking the first paint; system fonts show until they arrive.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      />
+    </noscript>
+
+    <!--
+      Applies the saved theme before the first paint so there is no flash of the
+      wrong theme. Light is the default; must stay in sync with ThemeProvider.
+    -->
+    <script>
+      (function () {
+        var theme = 'light';
+        try {
+          if (localStorage.getItem('site-theme') === 'dark') theme = 'dark';
+        } catch (e) {}
+        var root = document.documentElement;
+        root.classList.toggle('dark', theme === 'dark');
+        root.style.colorScheme = theme;
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute('content', theme === 'dark' ? '#0f172a' : '#f8fafc');
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <p style="padding: 2rem; font-family: system-ui, sans-serif">
+        This site needs JavaScript to display its content. Please enable JavaScript and reload.
+      </p>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

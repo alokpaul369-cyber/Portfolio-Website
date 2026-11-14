@@ -1,0 +1,27 @@
+{
+  "name": "alok-paul-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio website and admin dashboard for Alok Paul, MERN full-stack developer.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "lint": "npm run lint -w client -w server",
+    "format": "prettier --write ."
+  },
+  "engines": {
+    "node": ">=22.9.0"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.7",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1"
+  }
+}

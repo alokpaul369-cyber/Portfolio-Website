@@ -1,0 +1,291 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/*
+ * Theme tokens. Every text color meets WCAG AA contrast (4.5:1) on both
+ * --bg and --surface in its theme; danger and success are used for error
+ * text, destructive buttons and status labels.
+ * Each color is a CSS variable, so switching the "dark" class on <html> swaps
+ * the whole palette. Components use the Tailwind names below (bg-bg,
+ * bg-surface, border-border, text-text, text-muted, text-primary,
+ * text-secondary) and never hard-coded hex values.
+ * The shared type scale (.text-display, .text-heading, .eyebrow) is defined
+ * in the components layer below.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Light theme (default): slate neutrals with one blue accent. */
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --primary: #1d4ed8;
+  --secondary: #334155;
+  --accent: #1d4ed8;
+  --text: #0f172a;
+  --muted: #475569;
+  --danger: #b91c1c;
+  --success: #15803d;
+  --header-bg: rgb(255 255 255 / 0.92);
+
+  /* Code blocks */
+  --code-bg: #f1f5f9;
+  --code-text: #1e293b;
+  --code-comment: #5f6688;
+  --code-keyword: #6d28d9;
+  --code-string: #0f6b5c;
+  --code-number: #9a4a12;
+  --code-function: #1d4ed8;
+  --code-type: #0e6a80;
+  --code-variable: #b0185a;
+  --code-punctuation: #475569;
+}
+
+.dark {
+  /* Dark theme */
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --border: #334155;
+  --primary: #93c5fd;
+  --secondary: #cbd5e1;
+  --accent: #93c5fd;
+  --text: #f1f5f9;
+  --muted: #a8b5c8;
+  --danger: #fca5a5;
+  --success: #86efac;
+  --header-bg: rgb(15 23 42 / 0.92);
+
+  /* Code blocks */
+  --code-bg: #0b1220;
+  --code-text: #e2e8f0;
+  --code-comment: #8088ae;
+  --code-keyword: #c4b5fd;
+  --code-string: #5eead4;
+  --code-number: #fdba74;
+  --code-function: #93c5fd;
+  --code-type: #67e8f9;
+  --code-variable: #f9a8d4;
+  --code-punctuation: #a5b4fc;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-header: var(--header-bg);
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-bg font-sans text-text antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary/25;
+  }
+
+  /* Consistent, visible keyboard focus across all interactive elements. */
+  :focus-visible {
+    @apply rounded-sm outline-2 outline-offset-2 outline-primary;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  /* Centred page width with consistent side padding. */
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  /*
+   * Type scale. Defined once here so pages never set their own heading sizes.
+   * Long words may break rather than force horizontal scrolling on phones.
+   */
+  .text-display {
+    @apply text-5xl font-bold tracking-tighter sm:text-6xl lg:text-7xl;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .text-heading {
+    @apply text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+
+  /* Small uppercase label above headings and groups. */
+  .eyebrow {
+    @apply text-xs font-semibold tracking-widest text-primary uppercase;
+  }
+
+  /*
+   * Article typography for rendered Markdown. Builds on the Typography
+   * plugin's `prose` class, mapped to the theme tokens so it follows
+   * dark and light mode automatically.
+   */
+  .article-prose {
+    /* Apply the plugin first so the token overrides below take precedence. */
+    @apply prose max-w-none leading-relaxed sm:prose-lg;
+
+    --tw-prose-body: var(--text);
+    --tw-prose-headings: var(--text);
+    --tw-prose-lead: var(--muted);
+    --tw-prose-links: var(--primary);
+    --tw-prose-bold: var(--text);
+    --tw-prose-counters: var(--muted);
+    --tw-prose-bullets: var(--border);
+    --tw-prose-hr: var(--border);
+    --tw-prose-quotes: var(--muted);
+    --tw-prose-quote-borders: var(--primary);
+    --tw-prose-captions: var(--muted);
+    --tw-prose-code: var(--text);
+    --tw-prose-pre-code: var(--code-text);
+    --tw-prose-pre-bg: var(--code-bg);
+    --tw-prose-th-borders: var(--border);
+    --tw-prose-td-borders: var(--border);
+  }
+
+  .article-prose :where(h2, h3, h4) {
+    @apply scroll-mt-24 tracking-tight;
+  }
+
+  .article-prose :where(a) {
+    @apply underline-offset-4 transition-colors hover:text-text;
+  }
+
+  /* Inline code: subtle chip instead of the plugin's backticks. */
+  .article-prose :where(:not(pre) > code) {
+    @apply rounded border border-border bg-surface px-1.5 py-0.5 font-mono text-[0.875em] font-normal;
+  }
+  .article-prose :where(:not(pre) > code)::before,
+  .article-prose :where(:not(pre) > code)::after {
+    content: none;
+  }
+
+  .article-prose :where(pre) {
+    @apply rounded-lg border border-border font-mono text-sm leading-relaxed;
+  }
+
+  .article-prose :where(img) {
+    @apply rounded-lg border border-border;
+  }
+
+  .article-prose :where(blockquote) {
+    @apply font-normal not-italic;
+  }
+  .article-prose :where(blockquote p)::before,
+  .article-prose :where(blockquote p)::after {
+    content: none;
+  }
+}
+
+@layer components {
+  /* Quiet hover state for cards that respond to the pointer. */
+  .card-hover {
+    transition:
+      border-color 200ms,
+      box-shadow 200ms;
+  }
+
+  @media (hover: hover) {
+    .card-hover:hover {
+      border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+      box-shadow: 0 6px 20px -12px rgb(15 23 42 / 0.25);
+    }
+  }
+}
+
+/*
+ * Syntax highlighting for code blocks (highlight.js class names),
+ * using the code colors defined with the theme tokens above.
+ */
+@layer components {
+  .hljs {
+    color: var(--code-text);
+    background: transparent;
+  }
+  .hljs-comment,
+  .hljs-quote {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-built_in,
+  .hljs-meta .hljs-keyword,
+  .hljs-doctag {
+    color: var(--code-keyword);
+  }
+  .hljs-string,
+  .hljs-regexp,
+  .hljs-addition,
+  .hljs-template-tag,
+  .hljs-meta .hljs-string {
+    color: var(--code-string);
+  }
+  .hljs-number,
+  .hljs-literal,
+  .hljs-symbol,
+  .hljs-bullet {
+    color: var(--code-number);
+  }
+  .hljs-title,
+  .hljs-title.function_,
+  .hljs-section {
+    color: var(--code-function);
+  }
+  .hljs-type,
+  .hljs-title.class_,
+  .hljs-class .hljs-title {
+    color: var(--code-type);
+  }
+  .hljs-attr,
+  .hljs-attribute,
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-property,
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class {
+    color: var(--code-variable);
+  }
+  .hljs-params,
+  .hljs-punctuation,
+  .hljs-operator,
+  .hljs-meta {
+    color: var(--code-punctuation);
+  }
+  .hljs-deletion {
+    color: var(--code-variable);
+  }
+  .hljs-emphasis {
+    font-style: italic;
+  }
+  .hljs-strong {
+    font-weight: 600;
+  }
+}

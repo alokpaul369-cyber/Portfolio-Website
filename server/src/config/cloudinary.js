@@ -1,0 +1,21 @@
+import { v2 as cloudinary } from 'cloudinary';
+import env from './env.js';
+
+/**
+ * Cloudinary client, configured once from environment variables.
+ * Uploads are disabled (503) when the credentials are not set.
+ */
+const { cloudName, apiKey, apiSecret } = env.cloudinary;
+
+export const isCloudinaryConfigured = Boolean(cloudName && apiKey && apiSecret);
+
+if (isCloudinaryConfigured) {
+  cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
+    secure: true,
+  });
+}
+
+export default cloudinary;

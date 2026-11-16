@@ -20,6 +20,6 @@ export const languageColors = {
  * Blue ramps matching the site accent.
  */
 export const calendarTheme = {
-  dark: ['#1e293b', '#1e3a8a', '#2563eb', '#60a5fa', '#bfdbfe'],
-  light: ['#e2e8f0', '#bfdbfe', '#60a5fa', '#2563eb', '#1e3a8a'],
+  dark: ['#22252b', '#132341', '#1d5ad8', '#4d8dff', '#a9c6ff'],
+  light: ['#ebe9e3', '#dce6fa', '#8fb0f0', '#4d8dff', '#1d5ad8'],
 };

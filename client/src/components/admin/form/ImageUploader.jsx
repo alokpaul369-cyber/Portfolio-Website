@@ -4,7 +4,8 @@ import { toast } from 'sonner';
 import api, { getErrorMessage } from '@/lib/api';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-const MAX_SIZE_MB = 5;
+// Mirrors the server limit (server/src/middleware/upload.js).
+const MAX_SIZE_MB = 4;
 
 /**
  * Uploads images to Cloudinary through POST /api/uploads and manages the list.

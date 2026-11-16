@@ -11,7 +11,8 @@ import { fadeUp, inViewOnce, stagger } from '@/lib/motion';
 import { cardBg } from '@/lib/tone';
 
 /** One category row: label on the left, its skills on the right from the lg breakpoint. */
-const groupClass = 'grid gap-4 border-t border-border py-8 lg:grid-cols-[14rem_1fr] lg:gap-10';
+const groupClass =
+  'grid gap-4 border-t border-border py-8 md:grid-cols-[minmax(0,3fr)_minmax(0,9fr)] md:gap-8';
 const skillGridClass = 'grid grid-cols-2 gap-3 sm:grid-cols-3';
 
 /** Placeholder cards shown while skills load, matching the real layout. */
@@ -83,16 +84,12 @@ export default function SkillsSection({ headingLevel = 'h2', tone = 'bg', index 
 
         {groups.map((group) => (
           <div key={group.key} className={groupClass}>
-            <GroupHeading
-              variants={fadeUp}
-              {...inViewOnce}
-              className="text-base font-semibold text-text"
-            >
+            <GroupHeading variants={fadeUp} {...inViewOnce} className="eyebrow pt-3">
               {group.label}
             </GroupHeading>
             <motion.ul variants={stagger(0, 0.04)} {...inViewOnce} className={skillGridClass}>
               {group.items.map((skill) => (
-                <SkillCard key={skill.id} name={skill.name} icon={skill.icon} tone={tone} />
+                <SkillCard key={skill.id} name={skill.name} icon={skill.icon} />
               ))}
             </motion.ul>
           </div>

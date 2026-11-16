@@ -1,13 +1,17 @@
 import { motion } from 'framer-motion';
-import { fadeUp } from '@/lib/motion';
+import { fadeUp, riseIn, stagger } from '@/lib/motion';
 
 /**
- * Heading block: optional section number and label, a large title and an
- * optional description. Page titles (h1) are followed by a short accent rule.
+ * Heading block: a small mono label (with the section number in the accent
+ * color), a serif title and an optional description.
+ *
+ * Section headings (h2) use a label-left grid from md: the label takes three
+ * of twelve columns and the title and description the other nine. Page titles
+ * (h1) stack the label above a larger title.
  *
  * @param {object} props
- * @param {string} [props.index]        section number shown before the label, for example "01"
- * @param {string} [props.label]        small uppercase label above the title
+ * @param {string} [props.index]        section number shown before the label, for example "02"
+ * @param {string} [props.label]        small uppercase label
  * @param {string} props.title
  * @param {string} [props.description]
  * @param {'h1' | 'h2'} [props.as='h1'] heading level; use h2 for sections within a page
@@ -32,27 +36,41 @@ export default function PageHeader({
   const isPageTitle = Heading === 'h1';
 
   return (
-    <motion.header variants={fadeUp} {...animation} className="flex flex-col gap-4">
+    <motion.header
+      variants={stagger(0, 0.1)}
+      {...animation}
+      className={
+        isPageTitle
+          ? 'flex flex-col gap-5'
+          : 'grid gap-3 md:grid-cols-[minmax(0,3fr)_minmax(0,9fr)] md:gap-8'
+      }
+    >
       {(label || index) && (
-        <p className="flex items-center gap-3">
-          {index && (
-            <>
-              <span className="text-sm font-semibold text-muted tabular-nums">{index}</span>
-              <span className="h-px w-8 bg-border" aria-hidden="true" />
-            </>
-          )}
-          {label && <span className="eyebrow">{label}</span>}
-        </p>
+        <motion.p variants={fadeUp} className="eyebrow md:pt-3">
+          {index && <span className="mr-2 text-primary">{index}</span>}
+          {label}
+        </motion.p>
       )}
-      <Heading
-        id={id}
-        tabIndex={tabIndex}
-        className={`${isPageTitle ? 'text-display' : 'text-heading'} outline-none`}
-      >
-        {title}
-      </Heading>
-      {isPageTitle && <span className="mt-2 h-1 w-16 bg-primary" aria-hidden="true" />}
-      {description && <p className="max-w-2xl text-lg leading-relaxed text-muted">{description}</p>}
+      <div className={isPageTitle ? 'flex flex-col gap-5' : 'flex flex-col gap-4'}>
+        {/* The title rises out of its own box; the bottom padding keeps descenders visible. */}
+        <Heading
+          id={id}
+          tabIndex={tabIndex}
+          className={`${isPageTitle ? 'text-display' : 'text-section'} overflow-hidden pb-[0.12em] outline-none`}
+        >
+          <motion.span variants={riseIn} className="block">
+            {title}
+          </motion.span>
+        </Heading>
+        {description && (
+          <motion.p
+            variants={fadeUp}
+            className="max-w-[58ch] text-[1.0625rem] leading-7 text-muted"
+          >
+            {description}
+          </motion.p>
+        )}
+      </div>
     </motion.header>
   );
 }

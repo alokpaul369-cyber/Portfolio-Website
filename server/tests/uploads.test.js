@@ -99,11 +99,11 @@ describe('POST /api/uploads/document', () => {
     expect(cloud.uploads).toHaveLength(0);
   });
 
-  it('rejects a PDF over 5 MB', async () => {
-    const large = Buffer.concat([PDF, Buffer.alloc(5 * 1024 * 1024)]);
+  it('rejects a PDF over 4 MB', async () => {
+    const large = Buffer.concat([PDF, Buffer.alloc(4 * 1024 * 1024)]);
     const response = await pdfUpload(admin, large);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch(/5 MB/);
+    expect(response.body.message).toMatch(/4 MB/);
     expect(cloud.uploads).toHaveLength(0);
   });
 

@@ -1,9 +1,11 @@
 /**
  * Full-width page band holding a centred content block with consistent
- * vertical spacing. Alternating tones separate neighbouring sections.
+ * vertical spacing. Bands share the page background and are separated by
+ * generous space alone; each opens with a `PageHeader` whose label carries
+ * the section number on the Home page.
  *
- * Cards inside a "surface" band should use `bg-bg`, and cards inside a "bg"
- * band `bg-surface`, so they stay distinct from the band behind them.
+ * `tone` still decides how cards inside contrast with the page: cards in a
+ * "surface" band use `bg-bg`, cards in a "bg" band `bg-surface` (`lib/tone.js`).
  *
  * @param {object} props
  * @param {string} [props.id]
@@ -11,11 +13,9 @@
  * @param {'bg' | 'surface'} [props.tone='bg']
  * @param {string} [props.className]       extra classes for the inner content block
  */
-export default function Section({ id, labelledBy, tone = 'bg', className = '', children }) {
-  const band = tone === 'surface' ? 'border-y border-border bg-surface' : '';
-
+export default function Section({ id, labelledBy, className = '', children }) {
   return (
-    <section id={id} aria-labelledby={labelledBy} className={band}>
+    <section id={id} aria-labelledby={labelledBy}>
       <div className={`container-page py-20 sm:py-28 ${className}`}>{children}</div>
     </section>
   );

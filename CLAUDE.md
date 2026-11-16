@@ -62,31 +62,59 @@ Templates: `server/.env.example`, `client/.env.example`. Never print or commit `
   `success`, `header`, plus `--code-*` for syntax highlighting.
 - **Components never use hex colors**; use the token classes (`bg-surface`, `text-muted`,
   `border-border`, `text-primary`, `text-danger`, and so on).
-- Palette: slate neutrals with one blue accent (light `#1d4ed8`, dark `#93c5fd`).
+- Palette: a blend of the owner's two references (a Swiss-style print portfolio and a
+  "Folio" developer template): warm paper and ink with one restrained blue accent. Light is
+  `#f6f5f1` paper, `#ffffff` surface, `#111216` ink, `#1d5ad8` accent; dark is `#0b0c0e`,
+  `#131519`, `#f1efe9`, `#4d8dff`. Extra tokens: `border-strong` (button and table rules) and
+  `grid` (the hero's background grid), `shadow` (light mode only). `.ink-panel` re-scopes the
+  tokens to the dark theme's values, so the hero code card and the footer contact card stay dark
+  focal points on the light page; `.elevated` gives key cards (code card, contact card, feature
+  project, About portrait) a soft shadow in light mode. The GitHub graph uses blue ramps (`data/github.js`) and
+  `theme-color` follows the page background.
 - **Light mode is the default.** Dark mode is the `.dark` class on `<html>`. The choice is saved
   under the localStorage key `site-theme`, only when the visitor uses the toggle. The inline
   script in `client/index.html` and `ThemeProvider` must stay in sync.
-- Font: Inter for everything; JetBrains Mono only for real code (Markdown code, the post editor).
+- Fonts: Newsreader (serif, regular weight) for every heading; Inter for body text; JetBrains
+  Mono for small labels (`.eyebrow`), the code card and real code. All three load from Google
+  Fonts in `client/index.html`.
 - Type scale (defined once in `index.css`; page and section titles always use these classes):
-  `.text-display` for the hero name and page titles (`h1`), `.text-heading` for section
-  headings (`h2`) and long titles in narrow columns (blog posts), `.eyebrow` for small uppercase
-  labels. `.container-page` is `max-w-6xl`.
-- `Section` (`components/ui/Section.jsx`) is a full-width band with `tone` `'bg'` or
-  `'surface'`. Home sections alternate tones and are numbered through `PageHeader`'s `index`
-  prop. Cards must contrast with their band: use `cardBg(tone)` / `insetBg(tone)` from
-  `lib/tone.js` (page background on a surface band, surface on a bg band).
-- Recurring layouts: label-left, content-right grids from `lg` (About, Skills rows, Experience
-  rows); sticky side columns use `lg:sticky lg:top-24` so they clear the 64 px header.
+  `.text-hero` for the Home headline only (an `<em>` inside is italic accent), `.text-display`
+  for page titles (`h1`), `.text-section` for `PageHeader` section headings (`h2`),
+  `.text-heading` for long titles in narrow columns (blog posts, detail pages), `.text-closing`
+  for the footer contact card headline, `.eyebrow` for small mono uppercase labels.
+  `.container-page` is `max-w-6xl`.
+- `PageHeader`: section headings (`h2`) use a label-left grid from `md` (3 of 12 columns for
+  the mono label with the section number in accent, 9 for the serif title and description);
+  page titles (`h1`) stack. Titles rise out of a mask (`riseIn` in `lib/motion.js`).
+- `Section` (`components/ui/Section.jsx`) is a full-width band on the page background (no
+  fills), separated from the next by space alone. Home numbers its sections from `01` through
+  `PageHeader`'s `index`. `tone` still alternates and decides card backgrounds via
+  `cardBg(tone)` / `insetBg(tone)` from `lib/tone.js`. Services, facts, skills and the
+  education list are flat: hairline-divided rows and columns rather than boxed cards.
+- Recurring layouts: the same 3/9 label-content split (About portrait and text, Skills groups,
+  education rows).
 - Shared UI: `Button` (variants `primary`, `outline`; sizes `md` default and `sm` for admin
   toolbars and forms; `to` renders a router link, `href` an anchor), `PageHeader` (`index`,
-  `label`, `title`, `description`; an `h1` gets an accent rule), `Section`, `LoadError`,
+  `label`, `title`, `description`), `Section`, `LoadError`,
   `SearchInput`, `Pagination`, `ThemeToggle`, `SocialLinks`, `ProfilePhoto`, `FilterButton`; cards use
-  `.card-hover` for a quiet hover state. `ProjectCard` has a `feature` layout, used by
-  `ProjectGrid`'s `featureFirst` on the Home page only.
-- The footer shows a "Get in touch" band on every public page except `/contact`.
+  `.card-hover` for a quiet hover state. `ProjectCard` has a `feature` layout, used on the Home
+  page only: `FeaturedProjects` shows the first featured project as a feature card and the rest
+  as numbered `ProjectRow`s in a table. `ProfilePhoto` takes `bare` inside a card.
+- Home hero: a static masked grid behind it (`.hero-grid-bg`), an availability pill, the
+  `h1` "Alok Paul, *role*" in `.text-hero`, the tagline and actions, beside a code card
+  ("profile.js") whose values come from the site content plus fixed stack and focus lists; then
+  a "Currently learning" row and the admin's key facts in a hairline strip (About shows the
+  facts only on `/about`; on Home it shows the portrait beside the text). The header brand is an
+  outlined mono initials tile with the name and role.
+- The footer shows a contact card (serif headline, email with a copy button, GitHub, LinkedIn
+  when set, and a "Send a message" link to `/contact`) on every public page except `/contact`,
+  then three columns (summary, navigation, profiles) and a mono base line.
 
 ## Client architecture (`client/src`)
 
+- Page transitions: `RootLayout` keys a `motion.div` by pathname with `pageEnter`, so each route
+  change fades in (query-string changes do not); the first page loads without it. In-page links
+  scroll smoothly and stop below the header (`scroll-padding-top` in `index.css`).
 - `router.jsx`: every page except Home is `lazy()` loaded. Public routes sit under `RootLayout`;
   `/admin` is a separate tree (`AdminRoot`, then `ProtectedRoute`, then `AdminLayout`).
 - `config/site.js`: personal details and links (name, role, tagline, photo paths, CV path,
@@ -242,6 +270,11 @@ errorStatus, retry }`. Loading is derived, so effects never call setState synchr
 - Education entries have no institution names (the field is optional for education).
 - `VITE_SITE_URL` must be set for production builds; the host needs an SPA fallback to
   `index.html`.
+- Hosting: one Vercel project serves the static build and the API as a serverless function
+  (`api/index.js` wraps `createApp()` and connects to MongoDB once per instance; `vercel.json`
+  routes `/api/*` to it and everything else to `index.html`). The root `package.json` is
+  `"type": "module"` for that file. Uploads are capped at 4 MB to stay under Vercel's 4.5 MB
+  request limit. `server/src/index.js` remains the entry point for local and always-on hosts.
 - Gmail settings (`SMTP_USER`, `SMTP_PASS`) are not configured, so contact emails are only logged.
 - The navigation is About, Skills, Projects, Research (only with visible research), Blog (only
   with a published post), Experience, Contact. Seven links fit on one line from 768 px.

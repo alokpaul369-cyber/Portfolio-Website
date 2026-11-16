@@ -32,7 +32,11 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const menuId = useId();
   // Optional links (Research, Blog) appear once their section has content.
-  const { sections } = useSiteContent();
+  const { sections, role } = useSiteContent();
+  const initials = site.name
+    .split(' ')
+    .map((part) => part[0])
+    .join('');
   const links = navLinks.filter((link) => !link.section || sections[link.section]);
 
   const toggleRef = useRef(null);
@@ -61,12 +65,19 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-header backdrop-blur-md">
       <nav aria-label="Main" className="container-page flex h-16 items-center justify-between">
-        <Link
-          to="/"
-          onClick={closeMenu}
-          className="text-lg font-bold tracking-tight text-text transition-colors hover:text-primary"
-        >
-          {site.name}
+        <Link to="/" onClick={closeMenu} className="group flex items-center gap-3">
+          <span
+            className="inline-grid size-[30px] place-items-center rounded-md border border-border-strong font-mono text-xs font-medium text-text"
+            aria-hidden="true"
+          >
+            {initials}
+          </span>
+          <span className="flex flex-col leading-tight">
+            <span className="text-base font-semibold tracking-tight text-text transition-colors group-hover:text-primary">
+              {site.name}
+            </span>
+            <span className="hidden font-mono text-xs text-muted sm:block">{role}</span>
+          </span>
         </Link>
 
         {/* Desktop navigation */}

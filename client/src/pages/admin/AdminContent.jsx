@@ -274,7 +274,7 @@ function ContentForm({ settings }) {
             setCvChanged(true);
           }}
           session={uploads}
-          hint="PDF, up to 5 MB. The Download CV button appears on the Home page once a file is saved."
+          hint="PDF, up to 4 MB. The Download CV button appears on the Home page once a file is saved."
         />
       </FormSection>
 

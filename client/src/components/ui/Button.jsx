@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-md text-sm transition-[color,background-color,border-color,box-shadow] duration-200 disabled:pointer-events-none disabled:opacity-60';
+  'inline-flex items-center justify-center gap-2 rounded-md text-sm transition-[color,background-color,border-color,box-shadow] duration-200 disabled:pointer-events-none disabled:opacity-60 [&_.lucide-arrow-right]:transition-transform [&_.lucide-arrow-right]:duration-200 hover:[&_.lucide-arrow-right]:translate-x-1 motion-reduce:[&_.lucide-arrow-right]:transform-none';
 
 // Both variants carry a 1px border so they are the same height side by side.
 const variants = {

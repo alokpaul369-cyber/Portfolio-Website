@@ -4,7 +4,8 @@ import ApiError from '../utils/ApiError.js';
 /** Accepted image types. SVG is excluded because it can contain scripts. */
 const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
 
-export const MAX_IMAGE_SIZE_MB = 5;
+// 4 MB keeps uploads under the 4.5 MB request limit of serverless hosts such as Vercel.
+export const MAX_IMAGE_SIZE_MB = 4;
 
 /**
  * Multer instance for image uploads.
@@ -26,7 +27,7 @@ const upload = multer({
 /** Accepts one image in the multipart field named "image". */
 export const uploadSingleImage = upload.single('image');
 
-export const MAX_DOCUMENT_SIZE_MB = 5;
+export const MAX_DOCUMENT_SIZE_MB = 4;
 
 /** Multipart field that carries an uploaded document. */
 export const DOCUMENT_FIELD = 'file';

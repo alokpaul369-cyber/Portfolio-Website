@@ -14,9 +14,9 @@ import useSiteContent from '@/hooks/useSiteContent';
 const FEATURED_RESEARCH = 3;
 
 /**
- * Home page: introduction, then numbered sections for About, featured
- * projects, featured research (when there is any), GitHub activity and Skills on
- * alternating background bands.
+ * Home page: introduction and key facts, then numbered sections for About,
+ * featured projects, featured research (when there is any), GitHub activity and
+ * Skills. Each section's number appears in its heading label.
  */
 export default function Home() {
   const { linkedin } = useSiteContent();

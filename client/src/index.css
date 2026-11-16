@@ -9,27 +9,32 @@
  * the whole palette. Components use the Tailwind names below (bg-bg,
  * bg-surface, border-border, text-text, text-muted, text-primary,
  * text-secondary) and never hard-coded hex values.
- * The shared type scale (.text-display, .text-heading, .eyebrow) is defined
- * in the components layer below.
+ * The shared type scale (.text-display, .text-section, .text-heading,
+ * .eyebrow, ...) is defined in the components layer below. Headings use the
+ * serif (Newsreader), body text Inter, small labels JetBrains Mono.
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Light theme (default): slate neutrals with one blue accent. */
-  --bg: #f8fafc;
+  /* Light theme (default): warm paper, near-black ink and one restrained blue accent. */
+  --bg: #f6f5f1;
   --surface: #ffffff;
-  --border: #e2e8f0;
-  --primary: #1d4ed8;
-  --secondary: #334155;
-  --accent: #1d4ed8;
-  --text: #0f172a;
-  --muted: #475569;
+  --border: #dfddd6;
+  --border-strong: #85878d;
+  --grid: #e3dfd4;
+  /* Soft lift for key cards on the light paper; none in dark mode. */
+  --shadow: 0 1px 2px rgb(17 18 22 / 0.05), 0 16px 40px -20px rgb(17 18 22 / 0.22);
+  --primary: #1d5ad8;
+  --secondary: #2b2d33;
+  --accent: #1d5ad8;
+  --text: #111216;
+  --muted: #55585f;
   --danger: #b91c1c;
-  --success: #15803d;
-  --header-bg: rgb(255 255 255 / 0.92);
+  --success: #1d7449;
+  --header-bg: rgb(246 245 241 / 0.9);
 
   /* Code blocks */
-  --code-bg: #f1f5f9;
+  --code-bg: #ecebe6;
   --code-text: #1e293b;
   --code-comment: #5f6688;
   --code-keyword: #6d28d9;
@@ -42,21 +47,24 @@
 }
 
 .dark {
-  /* Dark theme */
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --border: #334155;
-  --primary: #93c5fd;
-  --secondary: #cbd5e1;
-  --accent: #93c5fd;
-  --text: #f1f5f9;
-  --muted: #a8b5c8;
+  /* Dark theme: night paper with warm ink. */
+  --bg: #0b0c0e;
+  --surface: #131519;
+  --border: #22252b;
+  --border-strong: #5f646e;
+  --grid: #171a1f;
+  --shadow: none;
+  --primary: #4d8dff;
+  --secondary: #d6d4ce;
+  --accent: #4d8dff;
+  --text: #f1efe9;
+  --muted: #9b9ea6;
   --danger: #fca5a5;
-  --success: #86efac;
-  --header-bg: rgb(15 23 42 / 0.92);
+  --success: #5fd39b;
+  --header-bg: rgb(11 12 14 / 0.9);
 
   /* Code blocks */
-  --code-bg: #0b1220;
+  --code-bg: #07080a;
   --code-text: #e2e8f0;
   --code-comment: #8088ae;
   --code-keyword: #c4b5fd;
@@ -72,6 +80,8 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-grid: var(--grid);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
@@ -82,6 +92,7 @@
   --color-header: var(--header-bg);
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Newsreader', 'Iowan Old Style', Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -89,6 +100,8 @@
   html {
     color-scheme: light;
     scroll-behavior: smooth;
+    /* In-page links stop below the 64 px sticky header instead of under it. */
+    scroll-padding-top: 5rem;
   }
 
   html.dark {
@@ -126,20 +139,64 @@
    * Long words may break rather than force horizontal scrolling on phones.
    */
   .text-display {
-    @apply text-5xl font-bold tracking-tighter sm:text-6xl lg:text-7xl;
-    line-height: 1.05;
+    @apply font-serif text-5xl font-normal sm:text-6xl lg:text-7xl;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
     overflow-wrap: anywhere;
   }
 
+  /* The Home page headline only; an <em> inside it is set in italic accent. */
+  .text-hero {
+    @apply font-serif font-normal;
+    font-size: clamp(2.75rem, 5.6vw, 4.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  /* The headline of the footer's contact card. */
+  .text-closing {
+    @apply font-serif font-normal;
+    font-size: clamp(2.25rem, 4vw, 3rem);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .text-hero em,
+  .text-closing em {
+    @apply text-primary italic;
+  }
+
+  /* Section headings (h2) in PageHeader. */
+  .text-section {
+    @apply font-serif text-[2rem] leading-[2.375rem] font-normal sm:text-[2.5rem] sm:leading-[2.875rem];
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
   .text-heading {
-    @apply text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl;
+    @apply font-serif text-3xl font-normal sm:text-4xl lg:text-5xl;
+    letter-spacing: -0.015em;
     line-height: 1.1;
     overflow-wrap: anywhere;
   }
 
+  /* Faint square grid behind the Home hero, fading out from the top left. Static. */
+  .hero-grid-bg {
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: center top;
+    mask-image: radial-gradient(ellipse 70% 80% at 30% 20%, black 20%, transparent 75%);
+  }
+
   /* Small uppercase label above headings and groups. */
   .eyebrow {
-    @apply text-xs font-semibold tracking-widest text-primary uppercase;
+    @apply font-mono text-xs font-medium tracking-[0.08em] text-muted uppercase;
   }
 
   /*
@@ -205,6 +262,32 @@
 
 @layer components {
   /* Quiet hover state for cards that respond to the pointer. */
+  /* Key cards that lift off the page in light mode (the shadow token is none in dark mode). */
+  .elevated {
+    box-shadow: var(--shadow);
+  }
+
+  /*
+   * A panel in night colors in both themes, for the hero code card and the
+   * footer contact card: a dark focal point on the light page. It re-scopes the
+   * tokens to the dark theme's values, so everything inside keeps using the
+   * token classes and the dark theme's checked contrast.
+   */
+  .ink-panel {
+    color-scheme: dark;
+    --bg: #0b0c0e;
+    --surface: #131519;
+    --border: #2a2e35;
+    --border-strong: #5f646e;
+    --primary: #4d8dff;
+    --secondary: #d6d4ce;
+    --text: #f1efe9;
+    --muted: #9b9ea6;
+    --success: #5fd39b;
+    background-color: var(--surface);
+    color: var(--text);
+  }
+
   .card-hover {
     transition:
       border-color 200ms,

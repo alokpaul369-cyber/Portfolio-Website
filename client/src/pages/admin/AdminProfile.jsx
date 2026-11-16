@@ -100,7 +100,7 @@ function ProfilePhotoForm({ settings }) {
 
       <FormSection
         title="New photo"
-        description="Upload a JPEG, PNG, WebP or AVIF up to 5 MB. A portrait with your face near the top works best; the site crops it to 4:5 around your face automatically."
+        description="Upload a JPEG, PNG, WebP or AVIF up to 4 MB. A portrait with your face near the top works best; the site crops it to 4:5 around your face automatically."
       >
         <div className="max-w-xs">
           <ImageUploader

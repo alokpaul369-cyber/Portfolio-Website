@@ -27,7 +27,7 @@ export default function ProjectCard({ project, layout = 'card', headingLevel: He
   return (
     <motion.div variants={fadeUp} className="h-full">
       <article
-        className={`card-hover group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface ${
+        className={`card-hover elevated group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface ${
           isFeature ? 'md:grid md:grid-cols-2' : ''
         }`}
       >
@@ -46,7 +46,7 @@ export default function ProjectCard({ project, layout = 'card', headingLevel: He
         </Link>
 
         <div className={`flex flex-1 flex-col gap-3 p-5 ${isFeature ? 'md:gap-4 md:p-8' : ''}`}>
-          <p className="flex items-center gap-2 text-[11px] font-semibold tracking-wider text-primary uppercase">
+          <p className="flex items-center gap-2 font-mono text-[0.8125rem] text-muted">
             {getProjectCategory(category).label}
             {featured && (
               <span className="rounded-full border border-primary/40 px-2 py-px text-[10px] text-primary normal-case">
@@ -56,8 +56,8 @@ export default function ProjectCard({ project, layout = 'card', headingLevel: He
           </p>
 
           <Heading
-            className={`leading-snug font-bold tracking-tight ${
-              isFeature ? 'text-xl md:text-3xl' : 'text-xl'
+            className={`font-serif leading-tight font-normal ${
+              isFeature ? 'text-2xl md:text-[2.125rem]' : 'text-2xl'
             }`}
           >
             <Link to={detailUrl} className="transition-colors hover:text-primary">

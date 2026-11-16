@@ -49,6 +49,7 @@ until the first entry is published.
 
 ```
 .
+├── api/                    Vercel entry point that runs the API as a serverless function
 ├── client/                 React app (Vite)
 │   ├── build/              Vite plugin that writes SEO tags, sitemap.xml and robots.txt
 │   ├── public/             Static files (favicon, default profile and social images)
@@ -72,7 +73,8 @@ until the first entry is published.
 │   │   ├── services/       Images, email, GitHub and analytics
 │   │   └── validators/     zod request schemas
 │   └── tests/              API tests on an in-memory database
-└── package.json            Workspace root and shared scripts
+├── package.json            Workspace root and shared scripts
+└── vercel.json             Vercel build settings and routing
 ```
 
 ## Getting started
@@ -176,27 +178,48 @@ Before pushing a change, run `npm run lint`, `npm run build` and the tests.
 
 ## Deployment
 
-The website is a static build (`client/dist`) and the API is a Node.js server.
+The whole site runs on a single free Vercel project: the website as static files and the API
+as one serverless function (`api/index.js`, which wraps the Express app). Because both share
+one address, the admin cookie works in every browser. No credit card is needed on Vercel's or
+MongoDB Atlas's free plans.
 
-1. **Same site for the website and the API.** Use one domain, for example `alokpaul.dev` for
-   the website and `api.alokpaul.dev` for the API, or let the website's host forward `/api` to
-   the API. If they live on unrelated domains (such as `vercel.app` and `onrender.com`), the
-   admin cookie needs `COOKIE_SAME_SITE=none`, and Safari and private windows block it, so
-   admin sign-in fails there.
-2. **API environment:** set `NODE_ENV=production`, `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL`
-   and `SITE_URL`. Set `TRUST_PROXY` to `1` for a single host, or `2` if the website's host
-   forwards `/api`, so rate limits see each visitor's own address.
-3. **Website build:** set `VITE_SITE_URL` and `VITE_API_URL` (an absolute API address lets the
-   build list projects, posts and research in `sitemap.xml`), then run `npm run build`.
-4. **SPA fallback:** serve `index.html` for unknown paths so deep links and the 404 page work
-   (a rewrite to `/index.html` on Vercel, or `/* /index.html 200` in `_redirects` on Netlify).
+1. **Database:** in MongoDB Atlas, create a free M0 cluster and a database user, and allow
+   network access from `0.0.0.0/0` (Vercel has no fixed IP addresses).
+2. **Import the repository** in Vercel. Keep the root directory as the repository root;
+   `vercel.json` sets the build command, the output folder (`client/dist`) and the routing.
+3. **Environment variables** in Vercel (Production):
+
+   | Variable | Value |
+   | --- | --- |
+   | `NODE_ENV` | `production` |
+   | `MONGODB_URI` | Atlas connection string |
+   | `JWT_SECRET` | 32 or more random characters |
+   | `CLIENT_URL`, `SITE_URL`, `VITE_SITE_URL` | your site address, for example `https://alok-paul.vercel.app` |
+   | `VITE_API_URL` | `/api` |
+   | `COOKIE_SAME_SITE` | `lax` |
+   | `TRUST_PROXY` | `1` |
+   | `MONGOMS_DISABLE_POSTINSTALL` | `1` (skips downloading the test database during the build) |
+   | `CLOUDINARY_*`, `SMTP_USER`, `SMTP_PASS`, `GITHUB_USERNAME` | as in `server/.env.example` |
+
+   After the first deploy, set `SITEMAP_API_URL` to `https://<your-site>/api` and redeploy, so
+   the sitemap lists projects, posts and research.
+4. **Admin account:** on your computer, point `MONGODB_URI` in `server/.env` at the same Atlas
+   database and run `npm run seed:admin -w server` (and `npm run seed:content -w server` for
+   the starter content).
 5. **Cloudinary:** on some plans, enable "Allow delivery of PDF and ZIP files" in the security
    settings so the uploaded CV can be downloaded.
-6. **After deploying:** sign in to `/admin` and fill in **Site content** (LinkedIn link, CV,
-   public email), then submit `https://<your-domain>/sitemap.xml` to Google Search Console.
+6. **After deploying:** sign in to `/admin`, fill in **Site content**, and submit
+   `https://<your-site>/sitemap.xml` to Google Search Console. Every `git push` redeploys.
 
-For best performance, cache `/assets/*` for a year (file names are content-hashed), serve
-`index.html` with `no-cache`, and keep the API and Atlas cluster in the same region.
+Limits of this setup: uploads are capped at 4 MB (Vercel accepts request bodies up to about
+4.5 MB); rate limits are counted per running function instance rather than across all of them;
+and the first request after a quiet period is slower while the function starts. Admin sign-in
+works only on the production address, because preview deployments have other addresses that
+`CLIENT_URL` does not allow.
+
+To run the API as an ordinary Node.js server instead (for example on a host with an always-on
+plan), use `npm start` with the same variables, keep the website and API on the same site, and
+set `TRUST_PROXY` to the number of proxies in front of the API.
 
 ## Security and privacy
 
@@ -270,8 +293,8 @@ Pagination object: `{ page, limit, total, totalPages, hasNextPage, hasPrevPage }
 | `DELETE /api/messages/:id`        | Delete one message                                              |
 | `POST /api/messages/bulk`         | `{ ids, action }` with `read`, `unread` or `delete` (1 to 100)   |
 | `GET /api/messages/export`        | CSV of the messages matching `status` and `search`              |
-| `POST /api/uploads?folder=`       | One image (`image` field): JPEG, PNG, WebP or AVIF, up to 5 MB   |
-| `POST /api/uploads/document`      | One PDF (`file` field), up to 5 MB, for the CV                  |
+| `POST /api/uploads?folder=`       | One image (`image` field): JPEG, PNG, WebP or AVIF, up to 4 MB   |
+| `POST /api/uploads/document`      | One PDF (`file` field), up to 4 MB, for the CV                  |
 | `DELETE /api/uploads`             | `{ publicId }`; removes an upload that was never saved          |
 
 </details>

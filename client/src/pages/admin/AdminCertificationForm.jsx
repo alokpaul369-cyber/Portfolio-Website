@@ -147,7 +147,7 @@ function CertificationForm({ entry }) {
 
       <FormSection
         title="Image"
-        description="Optional picture of the certificate. JPEG, PNG, WebP or AVIF up to 5 MB."
+        description="Optional picture of the certificate. JPEG, PNG, WebP or AVIF up to 4 MB."
       >
         <Controller
           control={control}

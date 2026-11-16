@@ -3,7 +3,8 @@ import { ExternalLink, FileText, Loader2, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import api, { getErrorMessage } from '@/lib/api';
 
-const MAX_SIZE_MB = 5;
+// Mirrors the server limit (server/src/middleware/upload.js).
+const MAX_SIZE_MB = 4;
 
 /**
  * Upload control for a single PDF (the CV).

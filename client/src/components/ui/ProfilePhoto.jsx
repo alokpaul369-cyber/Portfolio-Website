@@ -16,6 +16,7 @@ import { useState } from 'react';
  * @param {string} props.name
  * @param {string} [props.alt]
  * @param {boolean} [props.loading]
+ * @param {boolean} [props.bare]  no frame or offset block, for a photo inside a card
  */
 export default function ProfilePhoto({
   src,
@@ -23,6 +24,7 @@ export default function ProfilePhoto({
   name,
   alt,
   loading = false,
+  bare = false,
   className = '',
 }) {
   const [current, setCurrent] = useState(src || fallbackSrc);
@@ -41,12 +43,16 @@ export default function ProfilePhoto({
 
   return (
     <div className={`relative ${className}`}>
-      {/* Decorative offset block behind the photo. */}
-      <span
-        className="absolute inset-0 translate-x-3 translate-y-3 rounded-lg border border-primary/30 bg-primary/10"
-        aria-hidden="true"
-      />
-      <div className="relative aspect-[4/5] overflow-hidden rounded-lg border border-border bg-surface">
+      {/* Decorative offset block behind the photo; `bare` drops it and the frame for use inside a card. */}
+      {!bare && (
+        <span
+          className="absolute inset-0 translate-x-3 translate-y-3 rounded-lg border border-primary/30 bg-primary/10"
+          aria-hidden="true"
+        />
+      )}
+      <div
+        className={`relative aspect-[4/5] overflow-hidden bg-surface ${bare ? '' : 'rounded-lg border border-border'}`}
+      >
         {loading ? (
           <div className="size-full animate-pulse bg-bg" aria-hidden="true" />
         ) : failed ? (
